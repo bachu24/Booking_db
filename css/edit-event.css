@@ -1,0 +1,114 @@
+.edit-wrapper {
+    background: #fff;
+    padding: 40px;
+    border-radius: 22px;
+    margin-top: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    position: relative;
+    width: 100%;
+}
+
+/* TITLE */
+.title {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+/* IMAGE — CENTERED ABOVE DETAILS */
+.image-box {
+    width: 280px;
+    height: 200px;
+    margin: 0 auto 35px;     /* จัดกลาง + ระยะห่างตาม UI */
+    position: relative;
+}
+
+.image-box img {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.change-btn {
+    position: absolute;
+    bottom: -12px;             /* ปุ่มลอยทับขอบล่างนิดนึง เหมือน UI */
+    right: 10px;
+    background: #7c3aed;
+    color: white;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* GRID (LABEL + INPUT) */
+.edit-grid {
+    display: grid;
+    grid-template-columns: 200px auto;
+    row-gap: 30px;
+    column-gap: 40px;
+    margin-top: 40px;
+    width: 75%;                 /* ⭐ ลดแคบ ปรับบาลานซ์กับ layout เหมือน UI */
+}
+
+.label {
+    font-weight: 700;
+    font-size: 16px;
+    padding-top: 6px;
+}
+
+/* INPUT FIELD */
+.value {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.value input,
+.value select {
+    border: none;
+    border-bottom: 2px solid #ccc;
+    padding: 8px 4px;
+    width: 100%;               /* ⭐ ยืดเต็มแถวแบบ UI */
+    font-size: 15px;
+    background: none;
+    outline: none;
+    transition: 0.2s;
+}
+
+.value input:focus,
+.value select:focus {
+    border-bottom: 2px solid #7c3aed;
+}
+
+.value input:disabled {
+    color: #666;
+}
+
+/* EDIT ICON — aligned right perfectly */
+.icon-edit {
+    position: absolute;
+    right: -15px;                /* ชิดขอบปลายเส้น */
+    font-size: 15px;
+    color: #7c3aed;
+    cursor: pointer;
+}
+
+/* SAVE BUTTON */
+.save-btn {
+    margin-top: 50px;
+    background: linear-gradient(90deg, #7d4bff, #5f2cff);
+    border: none;
+    width: 220px;
+    padding: 14px;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    border-radius: 30px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+}

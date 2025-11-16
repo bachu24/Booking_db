@@ -1,0 +1,126 @@
+/* ============================================
+   EVENT HEADER (ตรงตามดีไซน์ต้นฉบับ)
+============================================== */
+.event-header {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+
+    padding: 35px 40px;
+    border-radius: 22px;
+    margin-top: 10px;
+
+    background-image: url("../assets/bg-blur.png");
+    background-size: cover;
+    background-position: center;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* LEFT — Step text */
+.event-step h3 {
+    color: #fff;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+}
+
+/* MIDDLE — Event Thumbnail */
+.event-thumb {
+    width: 145px;
+    height: 145px;
+    border-radius: 18px;
+    object-fit: cover;
+}
+
+/* RIGHT — Title + Showtime */
+.event-header-right h2 {
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.event-header-right p {
+    color: #eee;
+    font-size: 15px;
+    margin: 0;
+}
+
+/* BACK BUTTON */
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 25px;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+
+/* ============================================
+   PAYMENT SECTION TITLE
+============================================== */
+.section-title {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+
+/* ============================================
+   PAYMENT METHODS
+============================================== */
+.payment-methods {
+    display: flex;
+    gap: 30px;
+    margin-top: 10px;
+}
+
+.pay-card {
+    flex: 1;
+    background: linear-gradient(135deg, #a46bff, #6a2eff);
+    padding: 35px 20px;
+    border-radius: 22px;
+    text-align: center;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.pay-card:hover {
+    transform: translateY(-4px);
+}
+
+.pay-icon {
+    font-size: 55px;
+    margin-bottom: 15px;
+}
+
+
+/* ============================================
+   PAY NOW BUTTON
+============================================== */
+.paynow-center {
+    text-align: center;
+    margin-top: 45px;
+}
+
+.paynow-btn {
+    width: 260px;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 600;
+
+    border-radius: 28px;
+    border: none;
+    cursor: pointer;
+
+    background: linear-gradient(90deg, #8d5bff, #5f2cff);
+    color: #fff;
+}

@@ -1,0 +1,229 @@
+/* ===============================
+   MAIN LAYOUT
+================================ */
+.event-layout {
+    display: flex;            /* เปลี่ยนจาก grid → flex */
+    gap: 35px;
+    margin-top: 20px;
+    align-items: stretch;     /* ให้สูงเท่ากัน */
+    min-height: 650px;        /* ให้มีฐานอ้างอิงความสูง */
+}
+
+/* ===============================
+   LEFT: EVENT DETAILS PANEL
+================================ */
+.event-details {
+    background: #fff;
+    padding: 25px;
+    border-radius: 20px;
+    width: 50%;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;             /* สำคัญสุด – ทำให้ยืดเท่ากัน */
+}
+
+.details-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.details-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 15px;
+
+    flex: 1;                  /* ยืดเต็มพื้นที่ */
+    overflow-y: auto;         /* ไม่ให้ดันกล่อง */
+}
+
+.event-image {
+    width: 100%;
+    height: 280px;
+    border-radius: 18px;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.status-badge {
+    padding: 6px 18px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.status-badge.green {
+    background: #d7f6d7;
+    color: #1e7b1e;
+}
+
+.status-badge.red {
+    background: #ffd6d6;
+    color: #c62828;
+}
+
+.info-list p {
+    margin: 15px 0;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.info-list i {
+    margin-right: 8px;
+    color: #555;
+}
+
+/* ACTION BUTTONS */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-edit,
+.btn-delete {
+    flex: 1;
+    padding: 12px 0;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(90deg, #8d5bff, #5f2cff);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-delete {
+    background: #b80000;
+}
+
+/* BACK BUTTON */
+.back-btn {
+    background: white;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    color: #333;
+    font-size: 18px;
+}
+
+/* ===============================
+   RIGHT: EVENT LIST PANEL
+================================ */
+.event-list {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 20px;
+    width: 50%;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;             /* ยืดเท่ากันกับซ้าย */
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.print-btn {
+    background: linear-gradient(90deg, #8d5bff, #5f2cff);
+    color: white;
+    padding: 10px 22px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* LABELS */
+.list-labels {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 43% 16% 16% 25%;
+    padding: 0 8px;
+    font-weight: 600;
+    color: #444;
+}
+
+/* EVENT LIST ITEMS */
+#event-items {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+.event-item {
+    display: grid;
+    grid-template-columns: 43% 16% 16% 25%;
+    align-items: center;
+    background: #f3f0ff;
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.event-item:hover {
+    background: #ebe6ff;
+}
+
+.event-item.active {
+    background: linear-gradient(90deg, #8d5bff, #5f2cff);
+    color: white;
+    border-radius: 14px;
+}
+
+/* DOT */
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.green { background: #21c251; }
+.red   { background: #d73737; }
+
+.view-all {
+    text-align: center;
+    margin-top: 18px;
+}
+
+.view-all a {
+    font-size: 14px;
+    font-weight: 600;
+    color: #5f2cff;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.view-all a:hover {
+    text-decoration: underline;
+}
+
+.event-item span:nth-child(2),
+.event-item span:nth-child(3) {
+    font-size: 14px;
+}
+
+.event-item span:nth-child(4),
+.event-item span:last-child {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}

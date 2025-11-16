@@ -1,0 +1,145 @@
+/* ===========================
+   EVENT DETAILS PAGE
+=========================== */
+
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    margin: 10px 0 15px;
+}
+
+
+/* ===========================
+   EVENT HEADER (BANNER)
+=========================== */
+
+.event-header {
+    display: flex;
+    gap: 30px;
+    padding: 40px;
+    border-radius: 25px;
+
+    /* Background blur image */
+    background: url("../assets/bg-blur.png") center/cover no-repeat;
+    background-color: rgba(0,0,0,0.35);
+    backdrop-filter: blur(6px);
+
+    color: #fff;
+    margin-bottom: 35px;
+    align-items: center;
+    position: relative;
+}
+
+
+/* ----- LEFT IMAGE PANEL ----- */
+
+.event-img {
+    width: 340px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.event-img img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    border-radius: 20px;
+    display: block;
+    background: #000;
+}
+
+/* Select Seat Button */
+.select-seat-btn {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background: linear-gradient(90deg, #7a40ff, #b47bff);
+    border: none;
+    padding: 16px 80px;       /* ปุ่มใหญ่ขึ้น */
+    color: white;
+    border-radius: 32px;
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 5px 15px rgba(122, 64, 255, 0.35);
+}
+
+
+/* ----- RIGHT INFO PANEL ----- */
+
+.event-info {
+    flex: 1;
+    padding-top: 15px;
+}
+
+.event-info h1 {
+    font-size: 40px;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+
+/* GRID ของข้อมูลด้านขวา */
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px 40px;
+}
+
+.info-box {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.info-box i {
+    font-size: 30px;
+}
+
+.info-box h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.info-box p {
+    margin: 3px 0 0;
+    line-height: 1.4;
+}
+
+.status-green {
+    color: #5aff5a;
+    font-weight: 700;
+}
+
+
+/* ===========================
+   DETAILS SECTION
+=========================== */
+
+.details-section {
+    background: white;
+    padding: 28px;
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+.details-section h2 {
+    font-size: 26px;
+    margin-bottom: 15px;
+}
+
+.details-section ul {
+    margin: 10px 0 20px 25px;
+}
+
+.details-section li {
+    margin-bottom: 5px;
+    line-height: 1.4;
+}

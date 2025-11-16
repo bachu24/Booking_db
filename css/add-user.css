@@ -1,0 +1,88 @@
+/* WHITE CARD */
+.event-box {
+    width: 100%;
+    background: #fff;
+    padding: 40px;
+    border-radius: 22px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+/* UPLOAD IMAGE BOX */
+.upload-container {
+    display: block;
+    width: 240px;
+    margin: 0 auto 40px auto;
+}
+
+.upload-box {
+    width: 240px;
+    height: 160px;
+    background: #eef4ff;
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.upload-box:hover {
+    background: #e1ecff;
+}
+
+.upload-icon {
+    font-size: 42px;
+    color: #7d4bff;
+}
+
+/* LABELS */
+.input-label {
+    font-weight: 700;
+    margin-top: 22px;
+    font-size: 15px;
+    display: block;
+}
+
+/* INPUT FIELDS */
+.input-line {
+    width: 100%;
+    padding: 14px 10px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.input-line:focus {
+    border-bottom: 2px solid #7d4bff;
+}
+
+/* SELECT FIELD */
+.select-line {
+    background: transparent;
+}
+
+/* SAVE BUTTON */
+.btn-center {
+    text-align: center;
+    margin-top: 35px;
+}
+
+.save-btn {
+    width: 200px;
+    padding: 14px;
+    border-radius: 30px;
+    border: none;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    background: linear-gradient(90deg, #7d4bff, #5f3cff);
+}

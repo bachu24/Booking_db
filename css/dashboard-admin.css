@@ -1,0 +1,53 @@
+/* WRAPPER */
+.dashboard-wrapper {
+    margin-top: 25px;
+}
+
+/* GRID 2×2 */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* ← 2 คอลัมน์ */
+    gap: 25px;
+}
+
+/* STAT CARD DESIGN */
+.stat-card {
+    padding: 25px;
+    border-radius: 18px;
+    color: white;
+    background: linear-gradient(135deg, #7b32ff, #5e30d4);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.stat-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.stat-card h1 {
+    font-size: 38px;
+    font-weight: 700;
+    margin: 5px 0 10px;
+}
+
+.stat-card p {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.green {
+    color: #9aff9a;
+}
+
+.green span {
+    color: #d9d9d9;
+    margin-left: 6px;
+}
+
+/* REMOVE ANY UNUSED REVENUE SECTION */
+.revenue-header,
+.chart-box,
+.month-picker {
+    display: none !important;
+}

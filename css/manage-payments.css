@@ -1,0 +1,137 @@
+.payment-layout {
+    display: flex;
+    gap: 35px;
+    margin-top: 20px;
+}
+
+/* LEFT: DETAILS */
+.payment-details {
+    width: 55%;
+    background: #fff;
+    padding: 28px;
+    border-radius: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.pd-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.pd-card p {
+    margin: 16px 0;
+    font-size: 15px;
+}
+
+.pd-card span {
+    display: block;
+    margin-top: 5px;
+    color: #444;
+}
+
+.pd-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn-edit,
+.btn-delete {
+    flex: 1;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+}
+
+.btn-edit {
+    background: linear-gradient(90deg, #8d5bff, #5f2cff);
+}
+
+.btn-delete {
+    background: #b80000;
+}
+
+/* RIGHT: PAYMENT LIST */
+.payment-list {
+    width: 45%;
+    background: #fff;
+    padding: 25px 28px;
+    border-radius: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.print-btn {
+    background: linear-gradient(90deg, #8d5bff, #5f2cff);
+    color: #fff;
+    padding: 9px 18px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.list-labels {
+    display: grid;
+    grid-template-columns: 36% 20% 20% 24%;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.pay-item {
+    display: grid;
+    grid-template-columns: 36% 20% 20% 24%;
+    padding: 12px 14px;
+    background: #f3f0ff;
+    border-radius: 14px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.pay-item:hover {
+    background: #ece7ff;
+}
+
+.pay-item.active {
+    background: linear-gradient(90deg, #8d5bff, #5f2cff);
+    color: #fff;
+}
+
+.pay-item span:last-child {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* STATUS DOT */
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.green { background: #27c257; }
+.blue  { background: #2f77ff; }
+.red   { background: #d62828; }
+
+.view-all {
+    text-align: center;
+    margin-top: 18px;
+}
+
+.view-all a {
+    font-size: 14px;
+    font-weight: 600;
+    color: #5f2cff;
+    text-decoration: none;
+}

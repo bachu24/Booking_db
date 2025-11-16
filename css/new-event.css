@@ -1,0 +1,86 @@
+/* EVENT BOX (white card) */
+.event-box {
+    width: 100%;
+    background: #fff;
+    padding: 40px;
+    border-radius: 22px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+/* UPLOAD IMAGE */
+.upload-container {
+    display: block;
+    width: 240px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 40px;
+}
+
+.upload-box {
+    width: 240px;
+    height: 160px;
+    background: #eee;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.upload-box:hover {
+    background: #e2e2e2;
+}
+
+.upload-icon {
+    font-size: 42px;
+    color: #7d4bff;
+    margin-bottom: 6px;
+}
+
+/* INPUTS */
+.input-label {
+    font-weight: 700;
+    margin-top: 18px;
+    font-size: 15px;
+    display: block;
+}
+
+.input-line {
+    width: 100%;
+    padding: 14px 10px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.input-line:focus {
+    border-bottom: 2px solid #7d4bff;
+}
+
+/* SAVE BUTTON */
+.btn-center {
+    text-align: center;
+    margin-top: 35px;
+}
+
+.save-btn {
+    width: 200px;
+    padding: 14px;
+    border-radius: 30px;
+    border: none;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    background: linear-gradient(90deg, #7d4bff, #5f3cff);
+}
