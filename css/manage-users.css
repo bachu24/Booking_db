@@ -71,18 +71,30 @@
     margin-top: 20px;
 }
 
+/* Ensure anchors used as buttons don't show underlines and center content vertically */
+.action-buttons a, .btn-edit, .btn-delete {
+    text-decoration: none;
+}
+
 .btn-edit,
 .btn-delete {
     flex: 1;
-    padding: 12px 0;
+    padding: 12px 20px;      /* give horizontal space for icon + label */
     border: none;
-    border-radius: 14px;
+    border-radius: 12px;
     background: linear-gradient(90deg, #8d5bff, #5f2cff);
     color: white;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+    display: flex;           /* center icon+text */
+    align-items: center;     /* vertical center */
+    justify-content: center; /* horizontal center */
+    text-decoration: none;   /* remove underline */
 }
+
+/* spacing between icon and label */
+.btn-edit i, .btn-delete i { margin-right: 10px; }
 
 .btn-delete {
     background: #b80000;
