@@ -110,8 +110,7 @@ $conn->close();
             <li onclick="location.href='manage-users.php'"><i class="fas fa-users icon"></i> Manage Users</li>
             <li class="active"><i class="fas fa-calendar-check icon"></i> Manage Events</li>
             <li onclick="location.href='manage-payments.php'"><i class="fas fa-credit-card icon"></i> Manage Payments</li>
-            <li onclick="location.href='settings.php'"><i class="fas fa-gear icon"></i> Settings</li>
-            <li onclick="location.href='../logout.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
+            <li onclick="location.href='../home.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
         </ul>
     </aside>
 

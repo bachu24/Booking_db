@@ -1,3 +1,71 @@
+<?php
+// 1. Start Session & Security
+session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
+    header("Location: ../login.php");
+    exit();
+}
+
+require '../db_connect.php';
+
+// 2. Handle Deletion
+if (isset($_GET['delete_id'])) {
+    $id_to_delete = intval($_GET['delete_id']);
+    $stmt = $conn->prepare("DELETE FROM Payment WHERE payment_id = ?");
+    $stmt->bind_param("i", $id_to_delete);
+    $stmt->execute();
+    $stmt->close();
+    header("Location: manage-payments.php");
+    exit();
+}
+
+// 3. Fetch All Payments (JOIN 4 Tables!)
+$payments = [];
+$sql = "SELECT 
+            Payment.*, 
+            Ticket.seat_no, 
+            Event.name AS event_name, 
+            User.name AS customer_name 
+        FROM Payment
+        JOIN Ticket ON Payment.ticket_id = Ticket.ticket_id
+        JOIN Event ON Ticket.event_id = Event.event_id
+        JOIN User ON Ticket.user_id = User.user_id
+        ORDER BY Payment.date DESC";
+
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        
+        // Format Date & Time
+        $row['formatted_date'] = date("d M Y", strtotime($row['date']));
+        $row['formatted_time'] = date("h:i A", strtotime($row['date']));
+        $row['full_datetime'] = date("d M Y, h:i A", strtotime($row['date']));
+        
+        // Format Money
+        $row['formatted_amount'] = number_format($row['amount'], 0);
+        
+        // Status Color Logic
+        if ($row['status'] == 'Completed') {
+            $row['status_label'] = 'Success'; // Display as Success
+            $row['color_class'] = 'green';
+            $row['text_color'] = '#1e7b1e';
+        } elseif ($row['status'] == 'Pending') {
+            $row['status_label'] = 'Pending';
+            $row['color_class'] = 'blue';
+            $row['text_color'] = '#1e40af';
+        } else {
+            $row['status_label'] = $row['status']; // Refunded/Failed
+            $row['color_class'] = 'red';
+            $row['text_color'] = '#b80000';
+        }
+
+        $payments[] = $row;
+    }
+}
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +73,7 @@
     <title>Manage Payments</title>
 
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/manage-payments.css">
+    <link rel="stylesheet" href="../css/manage-payments.css?v=<?php echo time(); ?>">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,7 +83,6 @@
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="brand-box">
             <img src="../assets/logo-tickets.png" class="logo">
@@ -30,7 +97,7 @@
             <li onclick="location.href='manage-users.php'"><i class="fas fa-user icon"></i> Manage Users</li>
             <li onclick="location.href='manage-events.php'"><i class="fas fa-calendar icon"></i> Manage Events</li>
             <li class="active"><i class="fas fa-credit-card icon"></i> Manage Payments</li>
-            <li onclick="location.href='../logout.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
+            <li onclick="location.href='../home.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
         </ul>
 
         <div class="help-box">
@@ -38,55 +105,61 @@
         </div>
     </aside>
 
-
-    <!-- MAIN CONTENT -->
     <main class="content">
 
-        <!-- TOP BAR -->
         <div class="top-bar">
             <div>
-                <h2>Welcome Back, Sainam!</h2>
+                <h2>Welcome Back, Admin!</h2>
                 <p class="sub">Exclusive Events Await!</p>
             </div>
-
             <img src="../assets/profile3.png" class="profile">
         </div>
 
-        <!-- CONTENT WRAPPER -->
         <div class="payment-layout">
 
-            <!-- LEFT SIDE — PAYMENT DETAILS -->
             <div class="payment-details">
 
                 <h2 class="pd-title">Payment Details</h2>
 
+                <?php if (count($payments) > 0): $first = $payments[0]; ?>
+
                 <div class="pd-card">
-
-                    <p><b>Payment ID</b><br><span id="pd-id">#PAY93658</span></p>
-                    <p><b>Customer Name</b><br><span id="pd-name">Jane Doe</span></p>
-                    <p><b>Event Name</b><br><span id="pd-event">ALDI FANCON IN BKK</span></p>
-                    <p><b>Ticket Seats</b><br><span id="pd-seats">B1–A12, B1–A13</span></p>
-                    <p><b>Amount (฿)</b><br><span id="pd-amount">12,000</span></p>
-                    <p><b>Transaction Date</b><br><span id="pd-date">25 Jun 2025, 04:54 PM</span></p>
-                    <p><b>Method</b><br><span id="pd-method">Mobile Banking</span></p>
-                    <p><b>Status</b><br><span id="pd-status">Success</span></p>
-
+                    <p><b>Payment ID</b><br><span id="pd-id">#PAY<?php echo $first['payment_id']; ?></span></p>
+                    <p><b>Customer Name</b><br><span id="pd-name"><?php echo htmlspecialchars($first['customer_name']); ?></span></p>
+                    <p><b>Event Name</b><br><span id="pd-event"><?php echo htmlspecialchars($first['event_name']); ?></span></p>
+                    <p><b>Ticket Seats</b><br><span id="pd-seats"><?php echo htmlspecialchars($first['seat_no']); ?></span></p>
+                    <p><b>Amount (฿)</b><br><span id="pd-amount"><?php echo $first['formatted_amount']; ?></span></p>
+                    <p><b>Transaction Date</b><br><span id="pd-date"><?php echo $first['full_datetime']; ?></span></p>
+                    <p><b>Method</b><br><span id="pd-method"><?php echo $first['method']; ?></span></p>
+                    
+                    <p><b>Status</b><br>
+                        <span id="pd-status" style="color: <?php echo $first['text_color']; ?>; font-weight:600;">
+                            <?php echo $first['status_label']; ?>
+                        </span>
+                    </p>
                 </div>
 
                 <div class="pd-actions">
-                    <button class="btn-edit"><i class="fas fa-pen"></i> Edit</button>
-                    <button class="btn-delete"><i class="fas fa-trash"></i> Delete</button>
+                    <a id="btn-edit-link" href="edit-payment.php?id=<?php echo $first['payment_id']; ?>" class="btn-edit" style="text-decoration:none; display:inline-flex; justify-content:center; align-items:center; gap:8px; color:white; padding:12px; border-radius:12px; flex:1;">
+                        <i class="fas fa-pen"></i> Edit
+                    </a>
+                    
+                    <a id="btn-delete-link" href="manage-payments.php?delete_id=<?php echo $first['payment_id']; ?>" class="btn-delete" style="text-decoration:none; display:inline-flex; justify-content:center; align-items:center; gap:8px; color:white; padding:12px; border-radius:12px; flex:1;" onclick="return confirm('Are you sure?');">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
                 </div>
+
+                <?php else: ?>
+                    <p>No payments found.</p>
+                <?php endif; ?>
 
             </div>
 
-
-            <!-- RIGHT SIDE — PAYMENT LIST -->
             <div class="payment-list">
 
                 <div class="list-header">
                     <h2>All Payments</h2>
-                    <button class="print-btn"><i class="fas fa-print"></i> Print</button>
+                    <button class="print-btn" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
                 </div>
 
                 <div class="list-labels">
@@ -97,37 +170,20 @@
                 </div>
 
                 <div id="payment-items">
-
-                    <div class="pay-item" onclick="selectPay(0, this)">
-                        <span>#PAY12345</span><span>18/2/25</span><span>04:45 PM</span>
-                        <span><span class="dot green"></span>Success</span>
-                    </div>
-
-                    <div class="pay-item" onclick="selectPay(1, this)">
-                        <span>#PAY87549</span><span>20/2/25</span><span>05:42 PM</span>
-                        <span><span class="dot green"></span>Success</span>
-                    </div>
-
-                    <div class="pay-item" onclick="selectPay(2, this)">
-                        <span>#PAY98634</span><span>12/2/25</span><span>06:12 PM</span>
-                        <span><span class="dot blue"></span>Pending</span>
-                    </div>
-
-                    <div class="pay-item" onclick="selectPay(3, this)">
-                        <span>#PAY23654</span><span>24/2/25</span><span>07:36 PM</span>
-                        <span><span class="dot blue"></span>Pending</span>
-                    </div>
-
-                    <div class="pay-item" onclick="selectPay(4, this)">
-                        <span>#PAY19645</span><span>23/2/25</span><span>08:17 PM</span>
-                        <span><span class="dot red"></span>Failed</span>
-                    </div>
-
-                    <div class="pay-item active" onclick="selectPay(5, this)">
-                        <span>#PAY93658</span><span>25/6/25</span><span>04:54 PM</span>
-                        <span><span class="dot green"></span>Success</span>
-                    </div>
-
+                    <?php foreach($payments as $index => $pay): ?>
+                        <div class="pay-item <?php echo ($index === 0) ? 'active' : ''; ?>" 
+                             onclick="selectPay(<?php echo $index; ?>, this)">
+                            
+                            <span>#PAY<?php echo $pay['payment_id']; ?></span>
+                            <span><?php echo $pay['formatted_date']; ?></span>
+                            <span><?php echo $pay['formatted_time']; ?></span>
+                            
+                            <span>
+                                <span class="dot <?php echo $pay['color_class']; ?>"></span>
+                                <?php echo $pay['status_label']; ?>
+                            </span>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
 
                 <div class="view-all">
@@ -142,98 +198,36 @@
 
 </div>
 
-
 <script>
+/* PASS PHP DATA TO JS */
+const payData = <?php echo json_encode($payments); ?>;
 
-// PAYMENT DATA
-const payData = [
-    {
-        id: "#PAY12345",
-        name: "Jane Doe",
-        event: "RIIZING LOUD IN BKK",
-        seats: "B1-A12, B1-A13",
-        amount: "9,500",
-        date: "18 Feb 2025, 04:45 PM",
-        method: "Credit Card",
-        status: "Success"
-    },
-    {
-        id: "#PAY87549",
-        name: "Somchai YY",
-        event: "THE DRAM SHOW4 IN BKK",
-        seats: "A2-B10",
-        amount: "12,000",
-        date: "20 Feb 2025, 05:42 PM",
-        method: "Mobile Banking",
-        status: "Success"
-    },
-    {
-        id: "#PAY98634",
-        name: "Mint BC",
-        event: "LYKN DUSK & DAWN",
-        seats: "C2-D05",
-        amount: "7,200",
-        date: "12 Feb 2025, 06:12 PM",
-        method: "Credit Card",
-        status: "Pending"
-    },
-    {
-        id: "#PAY23654",
-        name: "Jirayut",
-        event: "GMMTV STARLYMPICS",
-        seats: "B12-B13",
-        amount: "6,000",
-        date: "24 Feb 2025, 07:36 PM",
-        method: "Mobile Banking",
-        status: "Pending"
-    },
-    {
-        id: "#PAY19645",
-        name: "June",
-        event: "KHEMJIRA'S FINAL EP",
-        seats: "E3-F03",
-        amount: "3,200",
-        date: "23 Feb 2025, 08:17 PM",
-        method: "Mobile Banking",
-        status: "Failed"
-    },
-    {
-        id: "#PAY93658",
-        name: "Jane Doe",
-        event: "ALDI FANCON IN BKK",
-        seats: "B1-A12, B1-A13",
-        amount: "12,000",
-        date: "25 Jun 2025, 04:54 PM",
-        method: "Mobile Banking",
-        status: "Success"
-    }
-];
-
-
-// SELECT PAYMENT FUNCTION
 function selectPay(index, el) {
+    // 1. Handle UI Active Class
     document.querySelectorAll(".pay-item").forEach(i => i.classList.remove("active"));
     el.classList.add("active");
 
+    // 2. Get Data
     const d = payData[index];
 
-    document.getElementById("pd-id").innerText = d.id;
-    document.getElementById("pd-name").innerText = d.name;
-    document.getElementById("pd-event").innerText = d.event;
-    document.getElementById("pd-seats").innerText = d.seats;
-    document.getElementById("pd-amount").innerText = d.amount;
-    document.getElementById("pd-date").innerText = d.date;
+    // 3. Update Details
+    document.getElementById("pd-id").innerText = "#PAY" + d.payment_id;
+    document.getElementById("pd-name").innerText = d.customer_name;
+    document.getElementById("pd-event").innerText = d.event_name;
+    document.getElementById("pd-seats").innerText = d.seat_no;
+    document.getElementById("pd-amount").innerText = d.formatted_amount;
+    document.getElementById("pd-date").innerText = d.full_datetime;
     document.getElementById("pd-method").innerText = d.method;
 
+    // 4. Update Status Color
     let statusEl = document.getElementById("pd-status");
-    statusEl.innerText = d.status;
+    statusEl.innerText = d.status_label;
+    statusEl.style.color = d.text_color;
 
-    statusEl.style.color =
-        d.status === "Success" ? "#1e7b1e" :
-        d.status === "Pending" ? "#1e40af" :
-        "#b80000";
+    // 5. Update Buttons
+    document.getElementById("btn-edit-link").href = "edit-payment.php?id=" + d.payment_id;
+    document.getElementById("btn-delete-link").href = "manage-payments.php?delete_id=" + d.payment_id;
 }
-
 </script>
 
 </body>

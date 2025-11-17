@@ -111,7 +111,7 @@ $image_path = !empty($user['profile_image']) ? "../assets/" . $user['profile_ima
         <ul class="menu">
             <li onclick="location.href='dashboard.php'"><i class="fas fa-house icon"></i> Home</li>
             <li class="active" onclick="location.href='manage-users.php'"><i class="fas fa-users icon"></i> Manage Users</li>
-            <li onclick="location.href='../logout.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
+            <li onclick="location.href='../home.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
         </ul>
     </aside>
 

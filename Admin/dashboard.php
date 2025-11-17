@@ -66,7 +66,7 @@ $conn->close();
             <li onclick="location.href='manage-users.php'"><i class="fas fa-users icon"></i> Manage Users</li>
             <li onclick="location.href='manage-events.php'"><i class="fas fa-calendar icon"></i> Manage Events</li>
             <li onclick="location.href='manage-payments.php'"><i class="fas fa-money-bill icon"></i> Manage Payments</li>
-            <li onclick="location.href='../logout.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
+            <li onclick="location.href='../home.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
         </ul>
 
         <div class="help-box">
@@ -110,7 +110,7 @@ $conn->close();
 
                 <div class="stat-card purple">
                     <h4>Total Revenue</h4>
-                    <h1>$<?php echo number_format($totalRevenue, 2); ?></h1>
+                    <h1>฿<?php echo number_format($totalRevenue, 2); ?></h1>
                     <p class="green">+18% <span>+7.8k this week</span></p>
                 </div>
 
