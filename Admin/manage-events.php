@@ -1,3 +1,77 @@
+<?php
+// 1. Start Session & Security
+session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
+    header("Location: ../login.php");
+    exit();
+}
+
+require '../db_connect.php';
+
+// 2. Handle Event Deletion
+if (isset($_GET['delete_id'])) {
+    $id_to_delete = intval($_GET['delete_id']);
+    
+    $stmt = $conn->prepare("DELETE FROM Event WHERE event_id = ?");
+    $stmt->bind_param("i", $id_to_delete);
+    
+    if ($stmt->execute()) {
+        header("Location: manage-events.php");
+        exit();
+    } else {
+        echo "Error deleting record: " . $conn->error;
+    }
+    $stmt->close();
+}
+
+// 3. Fetch All Events
+$events = [];
+$sql = "SELECT Event.*, Venue.name AS venue_name 
+        FROM Event 
+        LEFT JOIN Venue ON Event.venue_id = Venue.venue_id 
+        ORDER BY Event.date DESC";
+
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        
+        // A. Image Logic
+        if (!empty($row['event_image'])) {
+            $row['img'] = "../assets/" . $row['event_image'];
+        } else {
+            $row['img'] = "../assets/default_event.jpg"; 
+        }
+
+        // B. IMPROVED STATUS LOGIC
+        // 1. Check if Admin manually set it to Closed/Sold Out
+        if (isset($row['status']) && ($row['status'] == 'Sold Out' || $row['status'] == 'Closed')) {
+            $row['status_text'] = $row['status'];
+            $row['status_color'] = "red";
+        } 
+        // 2. Check if seats ran out (even if status says Available)
+        elseif ($row['available_seats'] <= 0) {
+            $row['status_text'] = "Sold Out";
+            $row['status_color'] = "red";
+        } 
+        // 3. Otherwise, it's Available
+        else {
+            $row['status_text'] = "Available";
+            $row['status_color'] = "green";
+        }
+
+        // C. Formatting
+        $row['formatted_date'] = date("d/m/y", strtotime($row['date']));
+        $row['formatted_time'] = date("h:i A", strtotime($row['time']));
+        $row['formatted_price'] = number_format($row['price'], 0);
+
+        $events[] = $row;
+    }
+}
+
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,17 +79,23 @@
     <title>Manage Events</title>
 
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/manage-events.css">
+    <link rel="stylesheet" href="../css/manage-users.css?v=<?php echo time(); ?>"> 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Specific grid tweak for Events */
+        .list-labels, .event-item {
+            grid-template-columns: 40% 20% 20% 20%; 
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="layout">
 
-    <!-- SIDEBAR (Admin version) -->
     <aside class="sidebar">
         <div class="brand-box">
             <img src="../assets/logo-tickets.png" class="logo">
@@ -28,113 +108,108 @@
         <ul class="menu">
             <li onclick="location.href='dashboard.php'"><i class="fas fa-house icon"></i> Home</li>
             <li onclick="location.href='manage-users.php'"><i class="fas fa-users icon"></i> Manage Users</li>
-
-            <!-- ACTIVE -->
             <li class="active"><i class="fas fa-calendar-check icon"></i> Manage Events</li>
-
             <li onclick="location.href='manage-payments.php'"><i class="fas fa-credit-card icon"></i> Manage Payments</li>
+            <li onclick="location.href='settings.php'"><i class="fas fa-gear icon"></i> Settings</li>
             <li onclick="location.href='../logout.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
         </ul>
-
-        <div class="help-box">
-            <i class="fas fa-circle-question help-icon"></i> Help & Support
-        </div>
     </aside>
 
-
-    <!-- MAIN CONTENT -->
     <main class="content">
 
-        <!-- TOP BAR -->
         <div class="top-bar">
             <div>
                 <h2>Welcome Back, Admin!</h2>
                 <p class="sub">Exclusive Events Await!</p>
             </div>
-
             <div class="right">
                 <div class="search">
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" placeholder="Search events...">
                 </div>
-
                 <img src="../assets/profile3.png" class="profile">
             </div>
         </div>
 
-        <!-- BACK BUTTON -->
         <a href="dashboard.php" class="back-btn">
             <i class="fas fa-arrow-left"></i>
         </a>
 
-        <!-- MAIN LAYOUT -->
         <div class="event-layout">
 
-            <!-- LEFT: DETAILS -->
-            <div class="event-details">
-                <h2 class="details-title">Events Details</h2>
+            <div class="event-details" id="details-box">
+                <h2 class="details-title">Event Details</h2>
+
+                <?php if (count($events) > 0): $first = $events[0]; ?>
 
                 <div class="details-card">
-                    <img id="event-image" src="../assets/event1.webp" class="event-image">
+                    <img id="event-image" src="<?php echo $first['img']; ?>" class="event-image" style="object-fit: cover;">
 
-                    <span class="status-badge green" id="event-status">Available</span>
+                    <span class="status-badge <?php echo $first['status_color']; ?>" id="event-status">
+                        <?php echo $first['status_text']; ?>
+                    </span>
 
                     <div class="info-list">
-                        <p><i class="fas fa-location-dot"></i> <b>Venue</b><br><span id="event-venue">Thunder Dome</span></p>
-                        <p><i class="fas fa-door-open"></i> <b>Gates Open</b><br><span id="event-gate">03:00 PM</span></p>
-                        <p><i class="fas fa-ticket"></i> <b>Tickets on sale</b><br><span id="event-sale">Saturday, Feb 25, 2025, 10:00 AM</span></p>
-                        <p><i class="fas fa-coins"></i> <b>Price</b><br><span id="event-price">6900 / 5900 / 5000</span></p>
+                        <p><i class="fas fa-location-dot"></i> <b>Venue</b><br>
+                           <span id="event-venue"><?php echo htmlspecialchars($first['venue_name']); ?></span>
+                        </p>
+                        <p><i class="fas fa-clock"></i> <b>Time</b><br>
+                           <span id="event-time"><?php echo $first['formatted_time']; ?></span>
+                        </p>
+                        <p><i class="fas fa-calendar-day"></i> <b>Date</b><br>
+                           <span id="event-date"><?php echo $first['formatted_date']; ?></span>
+                        </p>
+                        <p><i class="fas fa-coins"></i> <b>Price</b><br>
+                           <span id="event-price"><?php echo $first['formatted_price']; ?> THB</span>
+                        </p>
                     </div>
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn-edit"><i class="fas fa-pen"></i> Edit</button>
-                    <button class="btn-delete"><i class="fas fa-trash"></i> Delete</button>
+                    <a id="btn-edit-link" href="edit-event.php?id=<?php echo $first['event_id']; ?>" class="btn-edit">
+                        <i class="fas fa-pen"></i> Edit
+                    </a>
+                    <a id="btn-delete-link" href="manage-events.php?delete_id=<?php echo $first['event_id']; ?>" class="btn-delete" onclick="return confirm('Are you sure you want to delete this event?');">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
                 </div>
+
+                <?php else: ?>
+                    <p>No events found.</p>
+                <?php endif; ?>
             </div>
 
-            <!-- RIGHT: LIST -->
             <div class="event-list">
 
                 <div class="list-header">
                     <h2>All Events</h2>
-                    <button class="print-btn"><i class="fas fa-print"></i> Print</button>
+                    <div class="right-btns">
+                         <button class="print-btn" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+                    </div>
                 </div>
 
                 <div class="list-labels">
-                    <span>Events</span>
+                    <span>Event</span>
                     <span>Date</span>
                     <span>Time</span>
                     <span>Status</span>
                 </div>
 
                 <div id="event-items">
-
-                    <div class="event-item active" onclick="selectEvent(0, this)">
-                        <span>RIIZING LOUD IN BKK</span><span>18/2/25</span><span>04:00 PM</span>
-                        <span><span class="dot green"></span>Available</span>
-                    </div>
-
-                    <div class="event-item" onclick="selectEvent(1, this)">
-                        <span>THE DRAM SHOW4 IN BKK</span><span>20/2/25</span><span>05:00 PM</span>
-                        <span><span class="dot green"></span>Available</span>
-                    </div>
-
-                    <div class="event-item" onclick="selectEvent(2, this)">
-                        <span>LYKN DUSK & DAWN</span><span>12/2/25</span><span>06:00 PM</span>
-                        <span><span class="dot green"></span>Available</span>
-                    </div>
-
-                    <div class="event-item" onclick="selectEvent(3, this)">
-                        <span>GMMTV STARLYMPICS</span><span>24/2/25</span><span>07:00 PM</span>
-                        <span><span class="dot green"></span>Available</span>
-                    </div>
-
-                    <div class="event-item" onclick="selectEvent(4, this)">
-                        <span>KHEMJIRA'S FINAL EP</span><span>23/2/25</span><span>08:00 PM</span>
-                        <span><span class="dot red"></span>Sold Out</span>
-                    </div>
-
+                    <?php foreach($events as $index => $evt): ?>
+                        <div class="event-item <?php echo ($index === 0) ? 'active' : ''; ?>" 
+                             onclick="selectEvent(<?php echo $index; ?>, this)">
+                            
+                            <span><?php echo htmlspecialchars($evt['name']); ?></span>
+                            <span><?php echo $evt['formatted_date']; ?></span>
+                            <span><?php echo $evt['formatted_time']; ?></span>
+                            
+                            <span>
+                                <span class="dot <?php echo $evt['status_color']; ?>"></span>
+                                <?php echo $evt['status_text']; ?>
+                            </span>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
 
                 <div class="view-all">
@@ -150,62 +225,31 @@
 </div>
 
 <script>
-const eventData = [
-    {
-        img: "../assets/event1.webp",
-        venue: "Thunder Dome",
-        gate: "03:00 PM",
-        sale: "Saturday, Feb 25, 2025, 10:00 AM",
-        price: "6900 / 5900 / 5000",
-        status: "Available"
-    },
-    {
-        img: "../assets/event2.webp",
-        venue: "Impact Arena",
-        gate: "02:00 PM",
-        sale: "Saturday, Feb 20, 2025, 10:00 AM",
-        price: "4500 / 3900 / 3500",
-        status: "Available"
-    },
-    {
-        img: "../assets/lykn.jpg",
-        venue: "Impact Arena",
-        gate: "04:00 PM",
-        sale: "Saturday, Feb 12, 2025, 11:00 AM",
-        price: "6900 / 5900 / 5000",
-        status: "Available"
-    },
-    {
-        img: "../assets/event4.jpg",
-        venue: "Muang Thong",
-        gate: "05:00 PM",
-        sale: "Saturday, Feb 24, 2025, 10:00 AM",
-        price: "3900 / 3200 / 2500",
-        status: "Available"
-    },
-    {
-        img: "../assets/khemjira.jpg",
-        venue: "Central World",
-        gate: "06:00 PM",
-        sale: "Saturday, Feb 23, 2025, 09:30 AM",
-        price: "5900 / 5200 / 4500",
-        status: "Sold Out"
-    }
-];
+/* PASS PHP DATA TO JS */
+const eventData = <?php echo json_encode($events); ?>;
 
 function selectEvent(index, element) {
+    // 1. Handle UI Active Class
     document.querySelectorAll(".event-item").forEach(i => i.classList.remove("active"));
     element.classList.add("active");
 
-    document.getElementById("event-image").src = eventData[index].img;
-    document.getElementById("event-venue").innerText = eventData[index].venue;
-    document.getElementById("event-gate").innerText = eventData[index].gate;
-    document.getElementById("event-sale").innerText = eventData[index].sale;
-    document.getElementById("event-price").innerText = eventData[index].price;
+    // 2. Get Data
+    const evt = eventData[index];
 
+    // 3. Update Details
+    document.getElementById("event-image").src = evt.img;
+    document.getElementById("event-venue").innerText = evt.venue_name;
+    document.getElementById("event-time").innerText = evt.formatted_time;
+    document.getElementById("event-date").innerText = evt.formatted_date;
+    document.getElementById("event-price").innerText = evt.formatted_price + " THB";
+    
     let badge = document.getElementById("event-status");
-    badge.innerText = eventData[index].status;
-    badge.className = "status-badge " + (eventData[index].status === "Sold Out" ? "red" : "green");
+    badge.innerText = evt.status_text;
+    badge.className = "status-badge " + evt.status_color;
+
+    // 4. Update Buttons
+    document.getElementById("btn-edit-link").href = "edit-event.php?id=" + evt.event_id;
+    document.getElementById("btn-delete-link").href = "manage-events.php?delete_id=" + evt.event_id;
 }
 </script>
 
