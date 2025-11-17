@@ -124,7 +124,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <li class="active" onclick="location.href='manage-users.php'"><i class="fas fa-users icon"></i> Manage Users</li>
             <li onclick="location.href='manage-events.php'"><i class="fas fa-calendar-check icon"></i> Manage Events</li>
             <li onclick="location.href='manage-payments.php'"><i class="fas fa-credit-card icon"></i> Manage Payments</li>
-            <li onclick="location.href='settings.php'"><i class="fas fa-gear icon"></i> Settings</li>
             <li onclick="location.href='../logout.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
         </ul>
 
