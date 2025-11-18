@@ -1,16 +1,68 @@
+<?php
+// 1. Start Session & Security Check
+session_start();
+
+// Check if user is logged in AND is an Organizer (or Admin for testing purposes)
+if (!isset($_SESSION['role']) || ($_SESSION['role'] !== 'Organizer' && $_SESSION['role'] !== 'Admin')) {
+    header("Location: ../login.php"); 
+    exit();
+}
+
+require '../db_connect.php';
+
+// Get Organizer ID and Name from Session
+$organizer_id = $_SESSION['user_id'];
+$organizer_name = $_SESSION['username'] ?? 'Organizer';
+
+// 2. Fetch Events created by THIS Organizer (Joining Venue and calculating Sold/Remaining)
+$events = [];
+
+// SQL Query to fetch event details, venue name, and calculate tickets sold
+$sql = "SELECT 
+            E.event_id, 
+            E.name AS event_title,
+            E.event_image,
+            E.time, 
+            E.total_seats, 
+            E.available_seats,
+            V.name AS venue_name,
+            -- Calculate tickets sold
+            (E.total_seats - E.available_seats) AS tickets_sold
+        FROM Event E
+        JOIN Venue V ON E.venue_id = V.venue_id
+        WHERE E.organizer_id = ?
+        ORDER BY E.date DESC
+        LIMIT 3"; // Limit to 3 for the dashboard preview
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $organizer_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        // Image Fallback Logic
+        $row['img'] = !empty($row['event_image']) 
+                     ? "../assets/" . $row['event_image'] 
+                     : "../assets/default_event.jpg";
+        
+        $events[] = $row;
+    }
+}
+$stmt->close();
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Organizer Dashboard</title>
 
-    <!-- GLOBAL -->
     <link rel="stylesheet" href="../css/global.css">
 
-    <!-- ORGANIZER DASHBOARD CSS -->
-    <link rel="stylesheet" href="../css/dashboard-organizer.css">
+    <link rel="stylesheet" href="../css/dashboard-organizer.css?v=<?php echo time(); ?>">
 
-    <!-- ICON & FONT -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -20,7 +72,6 @@
 
 <div class="layout">
 
-    <!-- ========== SIDEBAR ========== -->
     <aside class="sidebar">
         <div class="brand-box">
             <img src="../assets/logo-tickets.png" class="logo">
@@ -44,13 +95,11 @@
     </aside>
 
 
-    <!-- ========== CONTENT ========== -->
     <main class="content">
 
-        <!-- TOP BAR -->
         <div class="top-bar-organizer">
             <div>
-                <h2>Welcome Back, Somchai!</h2>
+                <h2>Welcome Back, <?php echo htmlspecialchars($organizer_name); ?>!</h2> 
                 <p class="sub">Exclusive Events Await!</p>
             </div>
 
@@ -60,112 +109,54 @@
                     <input type="text" placeholder="Events">
                 </div>
 
-                <img src="../assets/profile2.png" class="organizer-profile">
+                <img src="../assets/profile3.png" class="organizer-profile">
             </div>
         </div>
 
 
-        <!-- ========== EVENTS SECTION ========== -->
         <div class="organizer-section">
 
             <h3>My Events</h3>
             <p class="small-sub">Total tickets sold of all events</p>
 
-            <div class="view-all-events">View All Events</div>
+            <a href="view-events.php" class="view-all-events">View All Events</a>
 
             <div class="events-row">
 
-                <!-- CARD 1 -->
-                <div class="event-card">
-                    <img src="../assets/lykn.jpg" class="event-thumb">
+                <?php if (empty($events)): ?>
+                    <p style="padding: 20px; color: #888;">You haven't created any events yet. Click 'New Event' to begin!</p>
+                <?php else: ?>
+                    <?php foreach ($events as $event): ?>
+                        <div class="event-card" onclick="location.href='view-events.php?id=<?php echo $event['event_id']; ?>'">
+                            <img src="<?php echo $event['img']; ?>" class="event-thumb">
 
-                    <div class="event-info">
-                        <p class="event-title">LYKN DUSK & DAWN</p>
+                            <div class="event-info">
+                                <p class="event-title"><?php echo htmlspecialchars($event['event_title']); ?></p>
 
-                        <div class="event-sub">
-                            <i class="fas fa-location-dot"></i> Impact Arena
+                                <div class="event-sub">
+                                    <i class="fas fa-location-dot"></i> <?php echo htmlspecialchars($event['venue_name']); ?>
+                                </div>
+
+                                <div class="event-time">
+                                    <i class="fas fa-clock"></i> <?php echo date("h:i A", strtotime($event['time'])); ?>
+                                </div>
+                            </div>
+
+                            <div class="event-stats">
+                                <div class="stats-number"><?php echo number_format($event['tickets_sold']); ?></div>
+                                <div class="stats-label">Number of Tickets Sold</div>
+
+                                <div class="event-stats-row">
+                                    <div class="stats-number small"><?php echo number_format($event['available_seats']); ?></div>
+                                    <div class="stats-label">Number of Tickets Remaining</div>
+                                    <span class="stats-arrow"><i class="fas fa-arrow-right"></i></span>
+                                </div>
+                            </div>
                         </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
 
-                        <div class="event-time">
-                            <i class="fas fa-clock"></i> 05:00 pm to 08:00 pm
-                        </div>
-                    </div>
-
-                    <div class="event-stats">
-                        <div class="stats-number">7865</div>
-                        <div class="stats-label">Number of Tickets Sold</div>
-
-                        <div class="event-stats-row">
-                            <div class="stats-number small">345</div>
-                            <div class="stats-label">Number of Tickets Remaining</div>
-                            <span class="stats-arrow"><i class="fas fa-arrow-right"></i></span>
-                        </div>
-                    </div>
-                </div>
-
-
-                <!-- CARD 2 -->
-                <div class="event-card">
-                    <img src="../assets/event1.webp" class="event-thumb">
-
-                    <div class="event-info">
-                        <p class="event-title">RIIZING LOUD IN BKK</p>
-
-                        <div class="event-sub">
-                            <i class="fas fa-location-dot"></i> Impact Arena
-                        </div>
-
-                        <div class="event-time">
-                            <i class="fas fa-clock"></i> 04:00 pm to 07:00 pm
-                        </div>
-                    </div>
-
-                    <div class="event-stats">
-                        <div class="stats-number">12345</div>
-                        <div class="stats-label">Number of Tickets Sold</div>
-
-                        <div class="event-stats-row">
-                            <div class="stats-number small">345</div>
-                            <div class="stats-label">Number of Tickets Remaining</div>
-                            <span class="stats-arrow"><i class="fas fa-arrow-right"></i></span>
-                        </div>
-                    </div>
-                </div>
-
-
-                <!-- CARD 3 -->
-                <div class="event-card">
-                    <img src="../assets/event6.webp" class="event-thumb">
-
-                    <div class="event-info">
-                        <p class="event-title">ALDI FANCON IN BKK</p>
-
-                        <div class="event-sub">
-                            <i class="fas fa-location-dot"></i> Thunder Dome
-                        </div>
-
-                        <div class="event-time">
-                            <i class="fas fa-clock"></i> 06:00 pm to 08:00 pm
-                        </div>
-                    </div>
-
-                    <div class="event-stats">
-                        <div class="stats-number">4567</div>
-                        <div class="stats-label">Number of Tickets Sold</div>
-
-                        <div class="event-stats-row">
-                            <div class="stats-number small">127</div>
-                            <div class="stats-label">Number of Tickets Remaining</div>
-                            <span class="stats-arrow"><i class="fas fa-arrow-right"></i></span>
-                        </div>
-                    </div>
-                </div>
-
-            </div><!-- events-row -->
-
-        </div><!-- organizer-section -->
-
-    </main>
+            </div></div></main>
 
 </div>
 
