@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $time = date('H:i:s', strtotime($datetime_local)); 
     
     // Image Handling Setup
-    $event_image = "default_event.jpg"; // Default image 
+    $event_image = "default.jpg"; // Default image 
 
     // A. Validation
     if (empty($name) || empty($date) || empty($venue_id) || $total_seats <= 0 || $price < 0) {
@@ -117,8 +117,7 @@ $conn->close();
             <li onclick="location.href='dashboard.php'"><i class="fas fa-house icon"></i> Home</li>
             <li class="active" onclick="location.href='new-event.php'"><i class="fas fa-calendar-plus icon"></i> New Event</li>
             <li onclick="location.href='view-events.php'"><i class="fas fa-eye icon"></i> View Events</li>
-            <li onclick="location.href='settings.php'"><i class="fas fa-gear icon"></i> Settings</li>
-            <li onclick="location.href='../logout.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
+            <li onclick="location.href='../home.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
         </ul>
     </aside>
 

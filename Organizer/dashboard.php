@@ -2,7 +2,7 @@
 // 1. Start Session & Security Check
 session_start();
 
-// Check if user is logged in AND is an Organizer (or Admin for testing purposes)
+// Ensure user is logged in AND is an Organizer (or Admin for testing purposes)
 if (!isset($_SESSION['role']) || ($_SESSION['role'] !== 'Organizer' && $_SESSION['role'] !== 'Admin')) {
     header("Location: ../login.php"); 
     exit();
@@ -17,7 +17,6 @@ $organizer_name = $_SESSION['username'] ?? 'Organizer';
 // 2. Fetch Events created by THIS Organizer (Joining Venue and calculating Sold/Remaining)
 $events = [];
 
-// SQL Query to fetch event details, venue name, and calculate tickets sold
 $sql = "SELECT 
             E.event_id, 
             E.name AS event_title,
@@ -26,13 +25,12 @@ $sql = "SELECT
             E.total_seats, 
             E.available_seats,
             V.name AS venue_name,
-            -- Calculate tickets sold
             (E.total_seats - E.available_seats) AS tickets_sold
         FROM Event E
         JOIN Venue V ON E.venue_id = V.venue_id
         WHERE E.organizer_id = ?
         ORDER BY E.date DESC
-        LIMIT 3"; // Limit to 3 for the dashboard preview
+        LIMIT 3"; 
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $organizer_id);
@@ -41,10 +39,10 @@ $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
-        // Image Fallback Logic
+        // Image Fallback Logic: Uses default.jpg
         $row['img'] = !empty($row['event_image']) 
                      ? "../assets/" . $row['event_image'] 
-                     : "../assets/default_event.jpg";
+                     : "../assets/default.jpg";
         
         $events[] = $row;
     }
@@ -58,14 +56,10 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Organizer Dashboard</title>
-
     <link rel="stylesheet" href="../css/global.css">
-
     <link rel="stylesheet" href="../css/dashboard-organizer.css?v=<?php echo time(); ?>">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 </head>
 
 <body>
@@ -75,25 +69,16 @@ $conn->close();
     <aside class="sidebar">
         <div class="brand-box">
             <img src="../assets/logo-tickets.png" class="logo">
-            <div class="brand-text">
-                <h3>Evenity</h3>
-                <p>Booking Service</p>
-            </div>
+            <div class="brand-text"><h3>Evenity</h3><p>Booking Service</p></div>
         </div>
-
         <ul class="menu">
             <li class="active"><i class="fas fa-house icon"></i> Home</li>
             <li onclick="location.href='new-event.php'"><i class="fas fa-calendar-plus icon"></i> New Event</li>
             <li onclick="location.href='view-events.php'"><i class="fas fa-eye icon"></i> View Events</li>
-            <li onclick="location.href='settings.php'"><i class="fas fa-gear icon"></i> Settings</li>
-            <li onclick="location.href='../logout.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
+            <li onclick="location.href='../home.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
         </ul>
-
-        <div class="help-box">
-            <i class="fas fa-circle-question help-icon"></i> Help & Support
-        </div>
+        <div class="help-box"><i class="fas fa-circle-question help-icon"></i> Help & Support</div>
     </aside>
-
 
     <main class="content">
 
@@ -102,17 +87,14 @@ $conn->close();
                 <h2>Welcome Back, <?php echo htmlspecialchars($organizer_name); ?>!</h2> 
                 <p class="sub">Exclusive Events Await!</p>
             </div>
-
             <div class="organizer-right">
                 <div class="organizer-search">
                     <i class="fas fa-search"></i>
                     <input type="text" placeholder="Events">
                 </div>
-
                 <img src="../assets/profile3.png" class="organizer-profile">
             </div>
         </div>
-
 
         <div class="organizer-section">
 
@@ -156,7 +138,10 @@ $conn->close();
                     <?php endforeach; ?>
                 <?php endif; ?>
 
-            </div></div></main>
+            </div>
+        </div>
+
+    </main>
 
 </div>
 
