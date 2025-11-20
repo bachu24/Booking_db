@@ -125,8 +125,7 @@ $conn->close();
             <li class="active"><i class="fas fa-house icon"></i> Home</li>
             <li onclick="location.href='new-event.php'"><i class="fas fa-calendar-plus icon"></i> New Event</li>
             <li onclick="location.href='view-events.php'"><i class="fas fa-eye icon"></i> View Events</li>
-            <li onclick="location.href='settings.php'"><i class="fas fa-gear icon"></i> Settings</li>
-            <li onclick="location.href='../logout.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
+            <li onclick="location.href='../home.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
         </ul>
         <div class="help-box"><i class="fas fa-circle-question help-icon"></i> Help & Support</div>
     </aside>
