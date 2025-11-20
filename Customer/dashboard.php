@@ -93,10 +93,7 @@ $conn->close();
                 <span>Home</span>
             </li>
 
-            <li onclick="location.href='my-ticket.php'">
-                <i class="fa-solid fa-ticket icon"></i>
-                <span>My Ticket</span>
-            </li>
+    
 
             <li onclick="location.href='profile.php'">
                 <i class="fa-solid fa-user icon"></i>

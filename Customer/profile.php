@@ -92,7 +92,6 @@ $conn->close();
     <meta charset="UTF-8">
     <title>My Profile</title>
     <link rel="stylesheet" href="../css/global.css">
-    <!-- We can reuse or adapt dashboard CSS, but let's inline simple styles for simplicity -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
@@ -152,7 +151,6 @@ $conn->close();
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="brand-box">
             <img src="../assets/logo-tickets.png" class="logo">
@@ -160,15 +158,11 @@ $conn->close();
         </div>
         <ul class="menu">
             <li onclick="location.href='dashboard.php'"><i class="fas fa-house icon"></i> Home</li>
-            <!-- Note: "My Ticket" could link to this same profile page or a separate one -->
-            <li onclick="location.href='profile.php'"><i class="fas fa-ticket icon"></i> My Ticket</li> 
             <li class="active" onclick="location.href='profile.php'"><i class="fas fa-user icon"></i> Profile</li>
-            <li onclick="location.href='settings.php'"><i class="fas fa-gear icon"></i> Settings</li>
-            <li onclick="location.href='../home.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
+            <li onclick="location.href='../logout.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
         </ul>
     </aside>
 
-    <!-- CONTENT -->
     <main class="content">
 
         <div class="top-bar">
@@ -183,7 +177,6 @@ $conn->close();
 
         <div class="profile-container">
 
-            <!-- LEFT: EDIT PROFILE -->
             <div class="profile-card">
                 <img src="<?php echo $profile_img; ?>" class="profile-img-large">
                 <h3><?php echo htmlspecialchars($user['name']); ?></h3>
@@ -214,7 +207,6 @@ $conn->close();
                 </form>
             </div>
 
-            <!-- RIGHT: TICKET HISTORY -->
             <div class="history-section">
                 <h2 style="margin-bottom: 20px;">My Tickets</h2>
                 
@@ -230,7 +222,17 @@ $conn->close();
                             </div>
                             <div style="text-align:right;">
                                 <div class="t-seat">Seat: <?php echo htmlspecialchars($t['seat_no']); ?></div>
-                                <div style="font-size:12px; color:#888; margin-top:5px;">ID: #<?php echo $t['ticket_id']; ?></div>
+                                <div style="font-size:12px; color:#888; margin-top:5px; margin-bottom: 8px;">ID: #<?php echo $t['ticket_id']; ?></div>
+
+                                <?php if ($t['status'] == 'Booked'): ?>
+                                    <a href="cancel-ticket.php?id=<?php echo $t['ticket_id']; ?>" 
+                                       onclick="return confirm('Are you sure you want to cancel this ticket?');"
+                                       style="font-size: 12px; color: #c0392b; text-decoration: underline; cursor: pointer;">
+                                       Cancel Ticket
+                                    </a>
+                                <?php else: ?>
+                                    <span style="font-size: 12px; color: #888; font-style: italic;">(Cancelled)</span>
+                                <?php endif; ?>
                             </div>
                         </div>
                     <?php endforeach; ?>

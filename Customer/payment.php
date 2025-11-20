@@ -68,10 +68,10 @@ if (isset($_POST['confirm_payment'])) {
         }
 
         // C. Update Event Available Seats
-        $seat_count = count($seat_array);
-        $update_event = $conn->prepare("UPDATE Event SET available_seats = available_seats - ? WHERE event_id = ?");
-        $update_event->bind_param("ii", $seat_count, $event_id);
-        $update_event->execute();
+        // $seat_count = count($seat_array);
+        // $update_event = $conn->prepare("UPDATE Event SET available_seats = available_seats - ? WHERE event_id = ?");
+        // $update_event->bind_param("ii", $seat_count, $event_id);
+        // $update_event->execute();
 
         // Commit Transaction
         $conn->commit();
@@ -110,7 +110,6 @@ if (isset($_POST['confirm_payment'])) {
         </div>
         <ul class="menu">
             <li onclick="location.href='dashboard.php'"><i class="fas fa-house icon"></i> Home</li>
-            <li onclick="location.href='my-ticket.php'"><i class="fas fa-ticket icon"></i> My Ticket</li>
             <li onclick="location.href='profile.php'"><i class="fas fa-user icon"></i> Profile</li>
             <li onclick="location.href='../home.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
         </ul>

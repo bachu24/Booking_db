@@ -73,7 +73,6 @@ $rows = ["AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO"];
         </div>
         <ul class="menu">
             <li onclick="location.href='dashboard.php'"><i class="fas fa-house icon"></i> Home</li>
-            <li onclick="location.href='my-ticket.php'"><i class="fas fa-ticket icon"></i> My Ticket</li>
             <li onclick="location.href='profile.php'"><i class="fas fa-user icon"></i> Profile</li>
             <li onclick="location.href='../home.php'"><i class="fas fa-right-from-bracket icon"></i> Logout</li>
         </ul>

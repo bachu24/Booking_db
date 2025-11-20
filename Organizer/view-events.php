@@ -145,6 +145,9 @@ $conn->close();
                     <a id="btn-delete-link" href="view-events.php?delete_id=<?php echo $first['event_id']; ?>" class="btn-delete" onclick="return confirm('Are you sure you want to delete this event?');">
                         <i class="fas fa-trash"></i> Delete
                     </a>
+                    <a href="report.php?id=<?php echo $first['event_id']; ?>" class="btn-edit" style="background: #0984e3; margin-right: 10px;">
+                        <i class="fas fa-chart-pie"></i> Report
+                    </a>
                 </div>
 
                 <?php else: ?>

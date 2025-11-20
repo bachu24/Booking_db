@@ -1,6 +1,6 @@
 <?php
-// index.php - Home page (front-end only)
-// Place assets in /assets folder: home-bg.jpg, card1.jpg, card2.jpg, card3.jpg
+require 'db_connect.php';
+$conn->query("CALL AutoClosePastEvents()");
 ?>
 <!doctype html>
 <html lang="th">
