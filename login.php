@@ -37,8 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } elseif ($role == 'Organizer') {
                 header("Location: Organizer/dashboard.php");
             } else {
-                // Customer
-                header("Location: home.php"); // Or Customer/dashboard.php
+                header("Location: Customer/dashboard.php"); 
             }
             exit();
         } else {
